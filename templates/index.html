@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber Fare Prediction</title>
+    <style>
+        :root {
+            --green: #00a86b;
+            --green-dark: #008b59;
+            --ink: #142238;
+            --muted: #6d7c91;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(ellipse at 78% 18%, rgba(255, 135, 91, .38), transparent 30%),
+                radial-gradient(ellipse at 85% 65%, rgba(24, 74, 112, .72), transparent 42%),
+                linear-gradient(125deg, #081321 0%, #172b40 52%, #080f1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 36px 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Decorative city lights and skyline */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .5;
+            background:
+                linear-gradient(to top, rgba(4, 10, 19, .95), transparent 50%),
+                repeating-linear-gradient(90deg, transparent 0 42px, rgba(255,255,255,.025) 43px 45px);
+        }
+
+        .city {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 38%;
+            height: 54%;
+            opacity: .42;
+            pointer-events: none;
+            background:
+                linear-gradient(to top, #050b13 0 75%, transparent 75%),
+                linear-gradient(to top, transparent 0 18%, #0b1726 18% 75%, transparent 75%);
+            clip-path: polygon(0 100%, 0 46%, 7% 46%, 7% 31%, 15% 31%, 15% 55%,
+                23% 55%, 23% 20%, 31% 20%, 31% 42%, 39% 42%, 39% 8%, 49% 8%,
+                49% 49%, 58% 49%, 58% 28%, 67% 28%, 67% 58%, 77% 58%, 77% 38%,
+                86% 38%, 86% 50%, 94% 50%, 94% 26%, 100% 26%, 100% 100%);
+        }
+
+        .page {
+            width: min(1180px, 100%);
+            display: grid;
+            grid-template-columns: minmax(220px, .78fr) minmax(440px, 1.25fr);
+            align-items: center;
+            gap: clamp(28px, 5vw, 76px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro {
+            color: white;
+            padding: 20px 0;
+        }
+
+        .brand {
+            font-size: clamp(42px, 5vw, 62px);
+            font-weight: 700;
+            letter-spacing: -3px;
+            margin-bottom: 42px;
+        }
+
+        .intro h1 {
+            font-size: clamp(30px, 3.3vw, 43px);
+            line-height: 1.17;
+            letter-spacing: -.8px;
+            margin-bottom: 20px;
+        }
+
+        .intro h1 span {
+            color: #5fe0ae;
+            display: block;
+        }
+
+        .intro > p {
+            color: #d2dbe5;
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 340px;
+        }
+
+        .benefits {
+            list-style: none;
+            display: grid;
+            gap: 22px;
+            margin-top: 38px;
+        }
+
+        .benefits li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #e4ebf2;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .benefit-icon {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 168, 107, .2);
+            border: 1px solid rgba(95, 224, 174, .32);
+            color: #67e8b6;
+            font-size: 21px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, .98);
+            border-radius: 22px;
+            padding: clamp(25px, 4vw, 40px);
+            box-shadow: 0 28px 80px rgba(0, 0, 0, .38);
+            border: 1px solid rgba(255,255,255,.7);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo {
+            height: 66px;
+            width: 66px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            color: #fff;
+            background: #080b10;
+            font-size: 38px;
+            font-weight: 700;
+        }
+
+        .card-header h2 {
+            font-size: clamp(25px, 3vw, 34px);
+            letter-spacing: -.8px;
+            margin-bottom: 12px;
+        }
+
+        .card-header p {
+            max-width: 430px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .location-box {
+            border: 1px solid #e6edf4;
+            border-radius: 13px;
+            overflow: hidden;
+            margin-bottom: 17px;
+            box-shadow: 0 3px 8px rgba(20, 34, 56, .035);
+        }
+
+        .location-heading {
+            padding: 13px 17px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .pickup .location-heading {
+            background: #eaf8f2;
+            color: #078456;
+        }
+
+        .dropoff .location-heading {
+            background: #edf5ff;
+            color: #1760c4;
+        }
+
+        .pin {
+            font-size: 19px;
+        }
+
+        .fields {
+            padding: 18px 14px 5px;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1b2a40;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            color: #71839c;
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        input[type="number"] {
+            display: block;
+            width: 100%;
+            min-height: 49px;
+            padding: 13px 14px 13px 43px;
+            border: 1px solid #ccd6e2;
+            border-radius: 10px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font-size: 14px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        input[type="number"]::placeholder {
+            color: #94a2b6;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 168, 107, .12);
+        }
+
+        .submit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            min-height: 55px;
+            margin-top: 22px;
+            border: 0;
+            border-radius: 11px;
+            background: linear-gradient(110deg, #079b65, #00ae72);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 7px 16px rgba(0, 168, 107, .2);
+            transition: transform .2s, box-shadow .2s, background .2s;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(110deg, #078755, #009760);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(0, 168, 107, .28);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .button-icon {
+            font-size: 20px;
+        }
+
+        .card-footer {
+            margin-top: 27px;
+            text-align: center;
+            color: #8a98aa;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .footer-rule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 13px;
+            margin-bottom: 7px;
+        }
+
+        .footer-rule::before,
+        .footer-rule::after {
+            content: "";
+            width: 55px;
+            height: 1px;
+            background: #cbd5e1;
+        }
+
+        @media (max-width: 850px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            .page {
+                grid-template-columns: 1fr;
+                max-width: 560px;
+                gap: 25px;
+            }
+
+            .intro {
+                text-align: center;
+                padding: 8px 0 0;
+            }
+
+            .brand {
+                margin-bottom: 17px;
+            }
+
+            .intro h1 {
+                font-size: 31px;
+            }
+
+            .intro > p {
+                margin: 0 auto;
+                font-size: 15px;
+            }
+
+            .benefits {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px 20px;
+                margin-top: 20px;
+            }
+
+            .benefits li {
+                font-size: 12px;
+            }
+
+            .benefit-icon {
+                width: 35px;
+                height: 35px;
+                flex-basis: 35px;
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 23px 17px;
+                border-radius: 17px;
+            }
+
+            .card-header h2 {
+                font-size: 25px;
+            }
+
+            .card-header p {
+                font-size: 14px;
+            }
+
+            .benefits li {
+                max-width: 135px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="city" aria-hidden="true"></div>
+
+    <main class="page">
+        <section class="intro" aria-label="Introduction">
+            <div class="brand">Uber</div>
+            <h1>Smart Rides.<span>Better Plans.</span></h1>
+            <p>Get an estimated fare and distance for your next ride.</p>
+
+            <ul class="benefits">
+                <li>
+                    <span class="benefit-icon" aria-hidden="true">⌖</span>
+                    <span>Fast &amp; Easy<br>Prediction</span>
+                </li>
+                <li>
+                    <span class="benefit-icon" aria-hidden="true">✓</span>
+                    <span>Machine Learning<br>Estimates</span>
+                </li>
+                <li>
+                    <span class="benefit-icon" aria-hidden="true">➤</span>
+                    <span>Plan Your Journey<br>Better</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <div class="logo" aria-hidden="true">U</div>
+                <h2>Uber Fare Prediction</h2>
+                <p>Enter your pickup and drop-off coordinates to estimate your fare and travel distance.</p>
+            </header>
+
+            <form action="/predict" method="POST">
+                <section class="location-box pickup">
+                    <div class="location-heading">
+                        <span class="pin" aria-hidden="true">●</span>
+                        <span>Pickup Location</span>
+                    </div>
+                    <div class="fields">
+                        <div class="form-group">
+                            <label for="plo">Pickup Longitude</label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">⌖</span>
+                                <input type="number" step="any" id="plo" name="plo"
+                                       placeholder="e.g. -73.9857" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pla">Pickup Latitude</label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">⌖</span>
+                                <input type="number" step="any" id="pla" name="pla"
+                                       placeholder="e.g. 40.7484" required>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="location-box dropoff">
+                    <div class="location-heading">
+                        <span class="pin" aria-hidden="true">⚑</span>
+                        <span>Drop-off Location</span>
+                    </div>
+                    <div class="fields">
+                        <div class="form-group">
+                            <label for="dlo">Drop-off Longitude</label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">⌖</span>
+                                <input type="number" step="any" id="dlo" name="dlo"
+                                       placeholder="e.g. -73.9851" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dla">Drop-off Latitude</label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">⌖</span>
+                                <input type="number" step="any" id="dla" name="dla"
+                                       placeholder="e.g. 40.7580" required>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <button type="submit" class="submit-btn">
+                    <span class="button-icon" aria-hidden="true">▦</span>
+                    <span>Calculate Fare</span>
+                    <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <footer class="card-footer">
+                <div class="footer-rule">Uber Fare Prediction System</div>
+                <div>Machine Learning Project</div>
+            </footer>
+        </section>
+    </main>
+</body>
+</html>

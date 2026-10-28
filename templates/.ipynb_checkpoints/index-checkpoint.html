@@ -1,0 +1,218 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Uber Fare Prediction</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #101820, #263746, #000000);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 35px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background: #000000;
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .header h1 {
+            color: #111111;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #777777;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dddddd;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            background: #f9f9f9;
+            transition: 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-color: #00a86b;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 168, 107, 0.12);
+        }
+
+        .location-title {
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eeeeee;
+            color: #00a86b;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            background: #00a86b;
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #008f5b;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(0, 168, 107, 0.25);
+        }
+
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #888888;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <div class="logo">U</div>
+            <h1>Uber Fare Prediction</h1>
+            <p>Enter your pickup and drop-off coordinates to estimate your fare and travel distance.</p>
+        </div>
+
+        <form action="/predict" method="POST">
+
+            <div class="location-title">📍 Pickup Location</div>
+
+            <div class="form-group">
+                <label for="plo">Pickup Longitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="plo"
+                    name="plo"
+                    placeholder="e.g. -73.9857"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="pla">Pickup Latitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="pla"
+                    name="pla"
+                    placeholder="e.g. 40.7484"
+                    required>
+            </div>
+
+            <div class="location-title">🏁 Drop-off Location</div>
+
+            <div class="form-group">
+                <label for="dlo">Drop-off Longitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="dlo"
+                    name="dlo"
+                    placeholder="e.g. -73.9851"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="dla">Drop-off Latitude</label>
+                <input
+                    type="number"
+                    step="any"
+                    id="dla"
+                    name="dla"
+                    placeholder="e.g. 40.7580"
+                    required>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Calculate Fare →
+            </button>
+
+        </form>
+
+        <div class="footer">
+            Uber Fare Prediction System | Machine Learning Project
+        </div>
+
+    </div>
+
+</body>
+</html>
+```

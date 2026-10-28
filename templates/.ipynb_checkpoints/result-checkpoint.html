@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber Fare Prediction Result</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #142238;
+            background:
+                radial-gradient(ellipse at 78% 18%,
+                    rgba(255, 135, 91, .38), transparent 30%),
+                radial-gradient(ellipse at 85% 65%,
+                    rgba(24, 74, 112, .72), transparent 42%),
+                linear-gradient(125deg, #081321, #172b40, #080f1a);
+        }
+
+        .page {
+            width: 100%;
+            max-width: 1050px;
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .intro {
+            color: white;
+        }
+
+        .brand {
+            font-size: 60px;
+            font-weight: bold;
+            letter-spacing: -3px;
+            margin-bottom: 35px;
+        }
+
+        .intro h1 {
+            font-size: 40px;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .intro h1 span {
+            display: block;
+            color: #5fe0ae;
+        }
+
+        .intro p {
+            color: #d2dbe5;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .result-card {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 40px;
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo {
+            width: 66px;
+            height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #080b10;
+            color: white;
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        .card-header h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .card-header p {
+            color: #6d7c91;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .result-item {
+            padding: 22px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            border: 1px solid #e5edf3;
+        }
+
+        .fare-item {
+            background: #eaf8f2;
+            border-color: #d4f0e3;
+        }
+
+        .distance-item {
+            background: #edf5ff;
+            border-color: #dbeafe;
+        }
+
+        .result-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #078456;
+        }
+
+        .distance-item .result-label {
+            color: #1760c4;
+        }
+
+        .result-value {
+            font-size: 34px;
+            font-weight: 800;
+            color: #101a29;
+            overflow-wrap: anywhere;
+        }
+
+        .note {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #8190a2;
+        }
+
+        .back-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            border-radius: 11px;
+            background: linear-gradient(110deg, #079b65, #00ae72);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #008b59;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 168, 107, 0.25);
+        }
+
+        .footer {
+            margin-top: 26px;
+            text-align: center;
+            color: #8a98aa;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                max-width: 540px;
+            }
+
+            .intro {
+                text-align: center;
+            }
+
+            .brand {
+                font-size: 45px;
+                margin-bottom: 15px;
+            }
+
+            .intro h1 {
+                font-size: 31px;
+            }
+
+            .result-card {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 14px;
+            }
+
+            .result-card {
+                padding: 20px 15px;
+            }
+
+            .result-value {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="page">
+
+        <section class="intro">
+            <div class="brand">Uber</div>
+
+            <h1>
+                Your Ride.
+                <span>Your Estimate.</span>
+            </h1>
+
+            <p>
+                Your predicted fare and travel distance are ready.
+                Review your estimate before planning your journey.
+            </p>
+        </section>
+
+        <section class="result-card">
+
+            <header class="card-header">
+                <div class="logo">U</div>
+
+                <h2>Prediction Result</h2>
+
+                <p>Your estimated fare and distance</p>
+            </header>
+
+            <div class="result-item fare-item">
+                <div class="result-label">
+                    ₹ &nbsp; Predicted Uber Fare
+                </div>
+
+                <div class="result-value">
+                    ₹{{ fare_prediction | round(2) }}
+                </div>
+            </div>
+
+            <div class="result-item distance-item">
+                <div class="result-label">
+                    ↗ &nbsp; Predicted Distance
+                </div>
+
+                <div class="result-value">
+                    {{ distance_prediction_km | round(2) }} km
+                </div>
+            </div>
+
+            <p class="note">
+                This is a machine-learning estimate,
+                not an official Uber fare quote.
+            </p>
+
+            <a href="/" class="back-btn">
+                ← &nbsp; Predict Again
+            </a>
+
+            <footer class="footer">
+                <div>Uber Fare Prediction System</div>
+                <div>Machine Learning Project</div>
+            </footer>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
